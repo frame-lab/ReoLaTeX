@@ -1,0 +1,138 @@
+% Copyright (c) 2019 Erick Grilo and Bruno Lopes
+%
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+%
+% The above copyright notice and this permission notice shall be included in
+% all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+% THE SOFTWARE.
+ %
+%  reo.sty
+%
+%  Created by Erick Grilo and Bruno Lopes (2019).
+%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{reo}[2019/06/11 v1.0 Reo Connectors]
+
+\RequirePackage{tikz}
+\RequirePackage{pgffor}
+
+\usetikzlibrary{arrows,shapes,automata,positioning,decorations,decorations.pathmorphing}
+
+
+\newcommand\rsync[2]{
+\raisebox{-.95ex}{\resizebox{!}{3.2ex}{
+\begin{tikzpicture}[->,>=stealth',semithick,node distance=1.6cm]
+  \node (A) {#1};
+  \node (B) [right of=A] {#2};
+  \path (A) edge  node {} (B);
+\end{tikzpicture}
+}}}
+
+\newcommand\rlsync[2]{
+\raisebox{-.95ex}{\resizebox{!}{3.2ex}{
+\begin{tikzpicture}[->,>=stealth',semithick,node distance=1.6cm,dashed]
+  \node (A)  {#1};
+  \node (B) [right of=A]  {#2};
+  \path (A) edge  node {} (B);
+\end{tikzpicture}
+}}}
+
+\newcommand\rfifo[2]{
+\raisebox{-.95ex}{\resizebox{!}{3.2ex}{
+\begin{tikzpicture}[->,>=stealth,semithick,node distance=1cm]
+  \node (A)  {#1};
+  \node (x) [draw,rectangle,minimum width=0.5cm,minimum height=0.2cm] at  (.95,0) {};
+  \node (B) [right of=x]  {#2};
+  \draw[semithick,-] (A) -- ++(.7cm,0) |- (.5,0);
+  \draw [semithick,->](x) edge  node {} (B);
+\end{tikzpicture}
+}}}
+
+\newcommand\rsdrain[2]{
+\raisebox{-.95ex}{\resizebox{!}{3.2ex}{
+\begin{tikzpicture}[->,>=to reversed,semithick,node distance=1.8cm]
+  \node (A)  {#1};
+  \node (B) [right of=A]  {#2};
+  \path (A) edge  node {} (B)
+    (B) edge  node {} (A);
+  \end{tikzpicture}
+}}}
+
+\newcommand\radrain[2]{
+\raisebox{-.95ex}{\resizebox{!}{3.2ex}{
+\begin{tikzpicture}[->,>=to reversed,semithick,node distance=1.8cm]
+  \node (A)  {#1};
+  \node (B) [right of=A]  {#2};
+  \path (A) edge  node {\tikz \draw[|-|,semithick ] (0,0) -- +(.1,0);} (B)
+    (B) edge  node {} (A);
+\end{tikzpicture}
+}}}
+
+\newcommand\rmerge[3]{
+\raisebox{-1.6ex}{\resizebox{!}{4.4ex}{
+\begin{tikzpicture}[>=stealth,semithick,node distance=.8cm]
+  \node (A) at (0,0) {#1};
+  \node (B) at (0,0.8)  {#2};
+  \node (x) [fill,circle,inner sep=1pt] at (0.8,0.4) {};
+  \node (C) [right of=x] {#3};
+  \path (A) edge  node {} (x)
+    (B) edge  node {} (x)
+    (x) edge  node {} (C);
+\end{tikzpicture}
+}}}
+
+\newcommand\rrep[3]{
+\raisebox{-1.6ex}{\resizebox{!}{4.4ex}{
+\begin{tikzpicture}[>=stealth,semithick,node distance=1cm]
+  \node (A) at (0,0) {#1} ;
+  \node (x) [fill,circle,inner sep=1pt] at (0.8,0) {};
+  \node (B) at (1.6,-0.4) {#2};
+  \node (C) at (1.6,0.4)  {#3};
+  \path (A) edge  node {} (x)
+    (x) edge  node {} (B)
+    (x) edge node  {} (C);
+\end{tikzpicture}
+}}}
+
+\newcommand\rfilter[2]{
+\raisebox{-.95ex}{\resizebox{!}{3.2ex}{
+\begin{tikzpicture}[->,decorate,decoration=snake,>=stealth,semithick,node distance=1.8cm]
+  \node (A)  {#1};
+  \node (B) [right of=A]  {#2};
+  \draw [->,decorate,decoration=snake] (A) -- (B);
+\end{tikzpicture}	
+}}}
+
+
+\newcommand\rtransform[2]{
+\raisebox{-.95ex}{\resizebox{!}{3.2ex}{
+\begin{tikzpicture}[->,>=stealth,semithick,node distance=1.8cm,]
+  \node (A)  {#1};
+  \node (B) [right of=A]  {#2};
+  \path (A) edge node {\tikz \draw[-triangle 90,] (0,0) -- +(.1,0);} (B);
+\end{tikzpicture}
+}}}
+
+
+\newcommand\rcomp[2]{
+\raisebox{-.95ex}{\resizebox{!}{3.2ex}{
+\begin{tikzpicture}[->,decorate,decoration=snake,>=stealth,semithick,node distance=1.8cm]
+  \node (A)  {#1};
+  \node (B) [right of=A]  {#2};
+  \ifthenelse
+  \draw [->,decorate,decoration=snake] (A) -- (B);
+\end{tikzpicture}	
+}}}
+
